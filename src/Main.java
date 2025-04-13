@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    // Метод для подключения к базе данных
+    
     private static Connection getConnection() throws SQLException {
         String URL = "jdbc:postgresql://localhost:5432/final_project_db";
         String USERNAME = "postgres";
@@ -11,7 +11,7 @@ public class Main {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
-    // Метод для добавления отзыва
+    
     private static void addFeedback(String username, String email, String message) {
         String sql = "INSERT INTO feedback (username, email, message) VALUES (?, ?, ?)";
         try (Connection connection = getConnection();
@@ -28,7 +28,7 @@ public class Main {
         }
     }
 
-    // Метод для получения всех отзывов
+    
     private static void viewAllFeedbacks() {
         String sql = "SELECT * FROM feedback";
         try (Connection connection = getConnection();
@@ -48,7 +48,7 @@ public class Main {
         }
     }
 
-    // Метод для обновления отзыва
+    
     private static void updateFeedback(int id, String newMessage) {
         String sql = "UPDATE feedback SET message = ? WHERE id = ?";
         try (Connection connection = getConnection();
@@ -68,7 +68,7 @@ public class Main {
         }
     }
 
-    // Метод для удаления отзыва
+    
     private static void deleteFeedback(int id) {
         String sql = "DELETE FROM feedback WHERE id = ?";
         try (Connection connection = getConnection();
@@ -87,7 +87,7 @@ public class Main {
         }
     }
 
-    // Основное меню для взаимодействия
+    
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int userChoice;
@@ -102,7 +102,7 @@ public class Main {
             System.out.print("Enter your choice: ");
 
             userChoice = scanner.nextInt();
-            scanner.nextLine(); // Очищаем буфер после считывания числа
+            scanner.nextLine(); 
 
             switch (userChoice) {
                 case 1:
