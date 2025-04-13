@@ -87,12 +87,11 @@ The project is organized into the following components:
 private static Connection getConnection() throws SQLException {
        return DriverManager.getConnection(
            "jdbc:postgresql://localhost:5432/final_project_db", 
-           "your_username", 
-           "your_password"
+           "postgres", 
+           "postgres"
        );
    }
 ```
-Replace `your_username` and `your_password` with your database credentials.
 
 2. **CRUD Methods:**  
    Key database operations like adding, viewing, updating, and deleting feedback are encapsulated in specific methods: `addFeedback()`, `viewAllFeedbacks()`, `updateFeedback()`, and `deleteFeedback()`.
