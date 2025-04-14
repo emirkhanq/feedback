@@ -1,9 +1,10 @@
 import java.sql.*;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Main {
 
-    
     private static Connection getConnection() throws SQLException {
         String URL = "jdbc:postgresql://localhost:5432/final_project_db";
         String USERNAME = "postgres";
@@ -11,7 +12,7 @@ public class Main {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
-    
+
     private static void addFeedback(String username, String email, String message) {
         String sql = "INSERT INTO feedback (username, email, message) VALUES (?, ?, ?)";
         try (Connection connection = getConnection();
@@ -28,7 +29,7 @@ public class Main {
         }
     }
 
-    
+
     private static void viewAllFeedbacks() {
         String sql = "SELECT * FROM feedback";
         try (Connection connection = getConnection();
@@ -48,7 +49,7 @@ public class Main {
         }
     }
 
-    
+
     private static void updateFeedback(int id, String newMessage) {
         String sql = "UPDATE feedback SET message = ? WHERE id = ?";
         try (Connection connection = getConnection();
@@ -68,7 +69,7 @@ public class Main {
         }
     }
 
-    
+
     private static void deleteFeedback(int id) {
         String sql = "DELETE FROM feedback WHERE id = ?";
         try (Connection connection = getConnection();
@@ -86,8 +87,37 @@ public class Main {
             System.err.println("Error while deleting the feedback: " + e.getMessage());
         }
     }
+    private static void exportFeedbacksToCSV(String fileName) {
+        String sql = "SELECT * FROM feedback";
 
-    
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql);
+             FileWriter csvWriter = new FileWriter(fileName)) {
+
+
+            csvWriter.append("ID,Username,Email,Message,Submitted At\n");
+
+
+            while (resultSet.next()) {
+                csvWriter.append(resultSet.getInt("id") + ",");
+                csvWriter.append(resultSet.getString("username") + ",");
+                csvWriter.append(resultSet.getString("email") + ",");
+                // Заменим переносы строк в message, чтобы не поломать CSV
+                String safeMessage = resultSet.getString("message").replace("\n", " ").replace("\r", " ");
+                csvWriter.append("\"" + safeMessage + "\",");
+                csvWriter.append(resultSet.getTimestamp("submitted_at").toString());
+                csvWriter.append("\n");
+            }
+
+            System.out.println("Feedbacks exported to: " + fileName);
+        } catch (SQLException | IOException e) {
+            System.err.println("Error while exporting to CSV: " + e.getMessage());
+        }
+    }
+
+
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int userChoice;
@@ -99,7 +129,9 @@ public class Main {
             System.out.println("3. Update feedback");
             System.out.println("4. Delete feedback");
             System.out.println("5. Exit from program");
+            System.out.println("6. Export feedbacks to CSV");
             System.out.print("Enter your choice: ");
+
 
             userChoice = scanner.nextInt();
             scanner.nextLine(); 
@@ -132,6 +164,11 @@ public class Main {
                     break;
                 case 5:
                     System.out.println("Exiting from program...");
+                    break;
+                case 6:
+                    System.out.print("Enter filename: ");
+                    String fileName = scanner.nextLine();
+                    exportFeedbacksToCSV(fileName);
                     break;
                 default:
                     System.out.println("Wrong input! Try again...");
